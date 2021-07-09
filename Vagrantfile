@@ -9,5 +9,6 @@ Vagrant.configure("2") do |config|
         server.vm.provision "shell", inline: "chmod +x scripts/script.sh && ./scripts/script.sh"
         server.vm.provision "file", source: "nginx/", destination: "temp/nginx"
         server.vm.provision "shell", inline: "mv -f temp/nginx/* /etc/nginx/ && systemctl reload nginx"
+        server.vm.provision "shell", inline: "(crontab -l 2>/dev/null; echo \"@reboot /home/vagrant/scripts/script.sh\") | crontab -"
     end
 end
