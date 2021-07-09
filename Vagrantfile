@@ -7,5 +7,7 @@ Vagrant.configure("2") do |config|
         end
         server.vm.provision "file", source: "scripts/script.sh", destination: "scripts/"
         server.vm.provision "shell", inline: "chmod +x scripts/script.sh && ./scripts/script.sh"
+        server.vm.provision "file", source: "nginx/", destination: "temp/nginx"
+        server.vm.provision "shell", inline: "mv -f temp/nginx/* /etc/nginx/ && systemctl reload nginx"
     end
 end
