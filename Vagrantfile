@@ -5,5 +5,7 @@ Vagrant.configure("2") do |config|
         server.vm.provider "virtualbox" do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512", "--cpus", "1", "--name", "ubuntu-server"]
         end
+        server.vm.provision "file", source: "scripts/script.sh", destination: "scripts/"
+        server.vm.provision "shell", inline: "chmod +x scripts/script.sh && ./scripts/script.sh"
     end
 end
