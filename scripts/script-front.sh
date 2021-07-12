@@ -1,6 +1,6 @@
 #!/bin/bash
 source ./scripts/install-dependencies.sh
-proxy="192.168.33.50"
+back="192.168.33.3"
 project="movie-analyst-ui"
 # check if work directory exist or create it
 mkdir -p /home/vagrant/ 
@@ -11,8 +11,8 @@ repo="/home/vagrant/$project"
 chown -R vagrant $repo
 # go to repo dir
 cd $repo
-sed -i 's/:3000//g' server.js
 # Install npm dependencies
 npm install
-# run app on port 3000 if not running
-curl localhost:$port &> /dev/null || ( export BACK_HOST="$proxy/back" && nodejs server.js ) &
+# run app on port 3030 if not running
+port=3030
+curl localhost:$port &> /dev/null || ( export BACK_HOST="$back" && pm2 start server.js )

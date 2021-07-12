@@ -12,3 +12,5 @@ for dependency in ${dependencies[@]}
 do  
     checkAndInstall $dependency
 done
+# Intall pm2
+[ $(which pm2) != "" ]] && echo "pm2 is already installed, skip" || npm install pm2 -g

@@ -15,4 +15,4 @@ cd $repo
 # Install npm dependencies
 npm install
 # run app on port 3000 if not running
-curl localhost:$port &> /dev/null || ( export PORT=$port && nodejs server.js ) &
+curl localhost:$port &> /dev/null || ( export PORT=$port && pm2 start server.js )
