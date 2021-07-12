@@ -1,7 +1,5 @@
 #!/bin/bash
 source ./scripts/install-dependencies.sh
-# app port
-port="3000"
 project="movie-analyst-api"
 # check if work directory exist or create it
 mkdir -p /home/vagrant/ 
@@ -15,4 +13,5 @@ cd $repo
 # Install npm dependencies
 npm install
 # run app on port 3000 if not running
+port="3000" # app port
 curl localhost:$port &> /dev/null || ( export PORT=$port && pm2 start server.js )

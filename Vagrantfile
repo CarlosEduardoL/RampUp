@@ -1,3 +1,7 @@
+# Variables
+$back_ip  = "192.168.33.3"
+$front_ip = "192.168.33.2"
+
 Vagrant.configure("2") do |config|
 
     # Copy the scripts folder on all the machines
@@ -7,7 +11,7 @@ Vagrant.configure("2") do |config|
     # Create backend machine
     config.vm.define "ubuntu-back" do |back|
         back.vm.box = "bento/ubuntu-20.04"
-        back.vm.network "private_network", ip: "192.168.33.3"
+        back.vm.network "private_network", ip: $back_ip
         customize_vm(back, "ubuntu-back")
         node_provision("back", back)
     end
@@ -15,7 +19,7 @@ Vagrant.configure("2") do |config|
     # Create frontend machine
     config.vm.define "ubuntu-front" do |front|
         front.vm.box = "bento/ubuntu-20.04"
-        front.vm.network "private_network", ip: "192.168.33.2"
+        front.vm.network "private_network", ip: $front_ip
         customize_vm(front, "ubuntu-front")
         node_provision("front", front)
     end
@@ -26,10 +30,10 @@ Vagrant.configure("2") do |config|
         proxy.vm.network "private_network", ip: "192.168.33.50"
         proxy.vm.network "public_network", ip: "192.168.0.50" # Here would be a public ip
         customize_vm(proxy, "ubuntu-proxy")
-        proxy.vm.provision "shell", inline: "mv ./scripts/script-proxy.sh ./scripts/script.sh"
-        proxy.vm.provision "shell", inline: "rm ./scripts/script-*.sh && ./scripts/script.sh"
         proxy.vm.provision "file", source: "nginx/", destination: "temp/nginx"
-        proxy.vm.provision "shell", inline: "mv -f temp/nginx/* /etc/nginx/ && systemctl reload nginx && rm -rf temp"
+        proxy.vm.provision "shell", inline: <<-Script
+            mv ./scripts/script-proxy.sh ./scripts/script.sh && rm ./scripts/script-*.sh && ./scripts/script.sh
+        Script
     end
 end
 
@@ -37,10 +41,12 @@ end
 
 # helper method to node machines
 def node_provision(name, machine)
-    machine.vm.provision "shell", inline: "mv ./scripts/script-#{name}.sh ./scripts/script.sh"
-    machine.vm.provision "shell", inline: "rm ./scripts/script-*.sh && ./scripts/script.sh"
-    # Add crontab rule to restart service on reboot
-    machine.vm.provision "shell", inline: "(crontab -l 2>/dev/null; echo \"@reboot /home/vagrant/scripts/script.sh\") | uniq | crontab -"
+    # Remove unnecessary scripts, run the configuration script and add crontab rule to restart service on reboot
+    machine.vm.provision "shell", inline: <<-Script
+        mv ./scripts/script-#{name}.sh ./scripts/script.sh && rm ./scripts/script-*.sh
+        ./scripts/script.sh #{$back_ip}
+        (crontab -l 2>/dev/null; echo "@reboot /home/vagrant/scripts/script.sh") | uniq | crontab -
+    Script
 end
 
 # helper method to setup vm customization
