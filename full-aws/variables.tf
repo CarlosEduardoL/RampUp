@@ -74,7 +74,7 @@ variable "back_sg_ingress_protocol" {
 
 variable "back_sg_ingress_description" {
   type    = string
-  default = "Allowed back from anywhere"
+  default = "Allowed back from front"
 }
 
 variable "back_sg_ingress_port" {
@@ -103,11 +103,26 @@ variable "db_sg_ingress_description" {
 
 variable "db_sg_ingress_port" {
   type        = number
-  default     = 3036
+  default     = 3306
   description = "This is the port for the inbound rule that allowed db to the ec2 instance"
 }
-variable "db_sg_ingress_cird" {
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-  description = "This is the list of CIDR"
+
+### all ssh vars
+variable "ssh_sg_ingress_protocol" {
+  type        = string
+  default     = "tcp"
+  description = "This is the protocol for the inbound rule that allowed shh to the ec2 instance"
 }
+
+variable "shh_sg_ingress_description" {
+  type    = string
+  default = "Allowed db from my public ip and inner ips"
+}
+
+variable "ssh_sg_ingress_port" {
+  type        = number
+  default     = 22
+  description = "This is the port for the inbound rule that allowed ssh to the ec2 instance"
+}
+
+variable "MYSQL_ROOT_PASSWORD" {}

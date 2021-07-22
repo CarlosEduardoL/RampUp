@@ -20,3 +20,7 @@ data "aws_subnet" "public_subnet_1" {
 data "aws_subnet" "private_subnet_1" {
   id = var.private_subnet_1_id
 }
+
+data "http" "my_ip" {
+  url = "http://ipv4.icanhazip.com"
+}
