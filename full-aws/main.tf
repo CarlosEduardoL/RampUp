@@ -17,8 +17,16 @@ data "aws_subnet" "public_subnet_1" {
   id = var.public_subnet_1_id
 }
 
+data "aws_subnet" "public_subnet_2" {
+  id = var.public_subnet_2_id
+}
+
 data "aws_subnet" "private_subnet_1" {
   id = var.private_subnet_1_id
+}
+
+data "aws_subnet" "private_subnet_2" {
+  id = var.private_subnet_2_id
 }
 
 data "http" "my_ip" {

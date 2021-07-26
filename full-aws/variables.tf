@@ -53,7 +53,7 @@ variable "front_sg_ingress_description" {
   default = "Allowed front from anywhere"
 }
 
-variable "front_sg_ingress_port" {
+variable "front_port" {
   type        = number
   default     = 3030
   description = "This is the port for the inbound rule that allowed front to the ec2 instance"
@@ -77,7 +77,7 @@ variable "back_sg_ingress_description" {
   default = "Allowed back from front"
 }
 
-variable "back_sg_ingress_port" {
+variable "back_port" {
   type        = number
   default     = 3000
   description = "This is the port for the inbound rule that allowed back to the ec2 instance"
@@ -125,4 +125,32 @@ variable "ssh_sg_ingress_port" {
   description = "This is the port for the inbound rule that allowed ssh to the ec2 instance"
 }
 
+### DB vars
 variable "MYSQL_ROOT_PASSWORD" {}
+
+### TG vars
+variable "tg_target_type" {
+  type    = string
+  default = "instance"
+}
+
+variable "tg_protocol" {
+  type    = string
+  default = "HTTP"
+}
+
+variable "lb_type" {
+  default = "application"
+}
+
+variable "front_lb_name" {
+  default = "MoviesRampUpFrontLB"
+}
+
+variable "back_lb_name" {
+  default = "MoviesRampUpBackLB"
+}
+
+variable "http_port" {
+  default = "80"
+}
