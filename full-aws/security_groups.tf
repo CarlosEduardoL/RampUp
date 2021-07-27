@@ -70,7 +70,7 @@ resource "aws_security_group" "movies_back_security_group" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [data.aws_vpc.ramp_up_vpc.cidr_block]
   }
   ingress {
     description = var.shh_sg_ingress_description
@@ -104,7 +104,7 @@ resource "aws_security_group" "movies_lb_back_security_group" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [data.aws_vpc.ramp_up_vpc.cidr_block]
   }
   egress {
     description = "Outbound rule"

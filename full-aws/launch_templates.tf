@@ -29,7 +29,7 @@ resource "aws_launch_template" "movies_front" {
 
 resource "aws_launch_template" "movies_back" {
   instance_type          = var.instance_type
-  image_id                    = var.ami_id
+  image_id               = var.ami_id
   vpc_security_group_ids = [aws_security_group.movies_back_security_group.id]
   key_name               = aws_key_pair.carlos_elv_key.key_name
   user_data              = base64encode(templatefile("./install-docker.sh", {

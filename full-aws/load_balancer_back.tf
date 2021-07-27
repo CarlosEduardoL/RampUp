@@ -26,6 +26,7 @@ resource "aws_lb" "back_application_lb" {
   load_balancer_type = var.lb_type
   subnets            = [data.aws_subnet.private_subnet_1.id, data.aws_subnet.private_subnet_2.id]
   security_groups    = [aws_security_group.movies_lb_back_security_group.id]
+  internal           = true
   tags               = {
     project     = var.project,
     responsible = var.responsible
