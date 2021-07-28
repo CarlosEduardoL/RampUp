@@ -126,7 +126,9 @@ variable "ssh_sg_ingress_port" {
 }
 
 ### DB vars
-variable "MYSQL_ROOT_PASSWORD" {}
+variable "MYSQL_ROOT_PASSWORD" {
+  sensitive = true
+}
 
 ### TG vars
 variable "tg_target_type" {
