@@ -16,7 +16,7 @@ resource "aws_security_group" "movies_front_security_group" {
     from_port   = var.ssh_sg_ingress_port
     to_port     = var.ssh_sg_ingress_port
     protocol    = var.front_sg_ingress_protocol
-    cidr_blocks = ["${chomp(data.http.my_ip.body)}/32"]
+    cidr_blocks = ["${aws_instance.bastion.private_ip}/32"]
   }
   egress {
     description = "Outbound rule"
@@ -67,18 +67,17 @@ resource "aws_security_group" "movies_back_security_group" {
 
   ingress {
     description = var.back_sg_ingress_description
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [data.aws_vpc.ramp_up_vpc.cidr_block]
+    from_port   = var.back_port
+    to_port     = var.back_port
+    protocol    = var.back_sg_ingress_protocol
+    security_groups = [aws_security_group.movies_lb_back_security_group.id]
   }
   ingress {
     description = var.shh_sg_ingress_description
     from_port   = var.ssh_sg_ingress_port
     to_port     = var.ssh_sg_ingress_port
     protocol    = var.ssh_sg_ingress_protocol
-    cidr_blocks = [data.aws_subnet.public_subnet_1.cidr_block, data.aws_subnet.private_subnet_1.cidr_block,
-      data.aws_subnet.public_subnet_2.cidr_block, data.aws_subnet.private_subnet_2.cidr_block]
+    cidr_blocks = ["${aws_instance.bastion.private_ip}/32"]
   }
   egress {
     description = "Outbound rule"
@@ -101,10 +100,10 @@ resource "aws_security_group" "movies_lb_back_security_group" {
 
   ingress {
     description = var.back_sg_ingress_description
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [data.aws_vpc.ramp_up_vpc.cidr_block]
+    from_port   = var.back_port
+    to_port     = var.back_port
+    protocol    = var.back_sg_ingress_protocol
+    security_groups = [aws_security_group.movies_front_security_group.id]
   }
   egress {
     description = "Outbound rule"
@@ -130,15 +129,8 @@ resource "aws_security_group" "movies_db_security_group" {
     from_port   = var.db_sg_ingress_port
     to_port     = var.db_sg_ingress_port
     protocol    = var.db_sg_ingress_protocol
-    cidr_blocks = [data.aws_vpc.ramp_up_vpc.cidr_block]
-  }
-
-  ingress {
-    description = var.shh_sg_ingress_description
-    from_port   = var.ssh_sg_ingress_port
-    to_port     = var.ssh_sg_ingress_port
-    protocol    = var.ssh_sg_ingress_protocol
-    cidr_blocks = [data.aws_subnet.public_subnet_1.cidr_block, data.aws_subnet.private_subnet_1.cidr_block]
+    cidr_blocks = ["${aws_instance.bastion.private_ip}/32"]
+    security_groups = [aws_security_group.movies_back_security_group.id]
   }
 
   egress {
@@ -165,7 +157,7 @@ resource "aws_security_group" "movies_bastion_security_group" {
     from_port   = var.ssh_sg_ingress_port
     to_port     = var.ssh_sg_ingress_port
     protocol    = var.ssh_sg_ingress_protocol
-    cidr_blocks = ["${chomp(data.http.my_ip.body)}/32", data.aws_vpc.ramp_up_vpc.cidr_block]
+    cidr_blocks = ["${chomp(data.http.my_ip.body)}/32"]
   }
 
   egress {
