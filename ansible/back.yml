@@ -1,0 +1,44 @@
+- hosts: tag_Name_Movies_back_instance
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  tasks:
+    - name: get info on backend container
+      docker_container_info:
+        name: appBack
+      register: result
+
+    - name: Does container exists?
+      ansible.builtin.debug:
+        msg: "The container {{ 'exists' if result.exists else 'does not exist' }}"
+
+    - name: Stop container
+      docker_container:
+        name: appBack
+        state: stopped
+      when: result.exists
+
+    - name: Remove container
+      docker_container:
+        name: appBack
+        state: absent
+
+    - name: Remove image
+      docker_image:
+        state: absent
+        name: appBack
+
+    - name: Execute docker container
+      docker_container:
+        name: appBack
+        image: zeronetdev/rampup-back:{{ tag }}
+        state: started
+        restart_policy: unless-stopped
+        pull: true
+        published_ports:
+          - "3000:3000"
+        env: 
+          DB_HOST: '{{ db_host }}'
+          DB_USER: '{{ db_user }}'
+          DB_PASS: '{{ db_pass }}'

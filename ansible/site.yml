@@ -1,0 +1,3 @@
+- import_playbook: docker.yml
+- import_playbook: front.yml
+- import_playbook: back.yml
