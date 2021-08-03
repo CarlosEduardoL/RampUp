@@ -1,4 +1,4 @@
-- hosts: tag_Name_Movies_front_instance
+- hosts: Movies_front_instance
   become: yes
   become_user: root
   become_method: sudo

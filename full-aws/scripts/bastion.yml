@@ -1,0 +1,43 @@
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  tasks:
+    - name: install bastion required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop: ['mysql-client', 'ansible', 'python3-pip']
+
+    - name: copy private key
+      copy:
+        src: ~/.ssh/id_rsa
+        dest: /home/ubuntu/.ssh/id_rsa
+        owner: ubuntu
+        mode: '0400'
+
+    - name: create symbolic link to python3
+      file:
+        src: /usr/bin/python3
+        dest: /usr/bin/python
+        state: link
+
+    - name: install pip required libraries
+      pip:
+        name: "{{ item }}"
+      loop: ['boto', 'boto3']
+
+    - name: copy credentials
+      copy:
+        src: ~/.aws
+        dest: /home/ubuntu/
+        owner: ubuntu
+        mode: '0600'
+
+    - name: copy sql
+      copy:
+        src: ../files/schema.sql
+        dest: /home/ubuntu/schema.sql
+        owner: ubuntu

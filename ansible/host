@@ -1,4 +1,0 @@
-[tag_Name_Movies_front_instance]
-front_config    ansible_connection=local
-[tag_Name_Movies_back_instance]
-back_config    ansible_connection=local
