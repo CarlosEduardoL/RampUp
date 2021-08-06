@@ -20,20 +20,8 @@ resource "aws_db_instance" "movie_db" {
   db_subnet_group_name   = aws_db_subnet_group.movie_db_group.name
   skip_final_snapshot    = true
 
-  depends_on = [null_resource.bastion_provisioning]
-
   tags = {
     project     = var.project,
     responsible = var.responsible
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      host        = aws_instance.bastion.public_ip
-      private_key = file("~/.ssh/id_rsa")
-    }
-    inline = ["mysql --host=${self.address} --user=${self.username} --password=${self.password} < ~/schema.sql"]
   }
 }

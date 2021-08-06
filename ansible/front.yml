@@ -4,6 +4,9 @@
   become_method: sudo
 
   tasks:
+
+    - include_tasks: docker.yml
+
     - name: get info on frontend container
       docker_container_info:
         name: appFront

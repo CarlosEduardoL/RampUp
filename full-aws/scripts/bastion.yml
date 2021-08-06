@@ -9,7 +9,11 @@
         name: "{{ item }}"
         state: present
         update_cache: yes
-      loop: ['mysql-client', 'ansible', 'python3-pip']
+      loop: ['ansible', 'python3-pip', 'daemonize', 'mysql-client']
+      register: apt_status
+      until: apt_status is success
+      delay: 6
+      retries: 10
 
     - name: copy private key
       copy:
@@ -41,3 +45,30 @@
         src: ../files/schema.sql
         dest: /home/ubuntu/schema.sql
         owner: ubuntu
+      become_user: ubuntu
+
+    - name: provide db
+      raw: "mysql --host={{ address }} --user=root --password={{ password }} < /home/ubuntu/schema.sql || true"
+
+    - name: clone rampup
+      git:
+        repo: https://github.com/CarlosEduardoL/RampUp
+        dest: /home/ubuntu/RampUp
+        version: configuration-management
+      become_user: ubuntu
+
+    - name: copy ansible config
+      copy:
+        src: ../ansible.cfg
+        dest: /home/ubuntu/ansible.cfg
+        owner: ubuntu
+      become_user: ubuntu
+
+    - name: copy provisioner server
+      copy:
+        src: ../files/provision_server
+        dest: /root/provision_server
+        mode: '0700'
+
+    - name: run provisioner server
+      raw: nohup /root/provision_server >/dev/null 2>&1 & sleep 1

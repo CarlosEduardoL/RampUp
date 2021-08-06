@@ -40,3 +40,4 @@ terraform.rc
 terraform.tfvars
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform
+/files/provision_server
