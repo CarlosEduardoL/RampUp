@@ -24,25 +24,4 @@ resource "aws_db_instance" "movie_db" {
     project     = var.project,
     responsible = var.responsible
   }
-
-  provisioner "file" {
-    source      = "./schema.sql"
-    destination = "~/schema.sql"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      host        = aws_instance.bastion.public_ip
-      private_key = file("~/.ssh/id_rsa")
-    }
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      host        = aws_instance.bastion.public_ip
-      private_key = file("~/.ssh/id_rsa")
-    }
-    inline = ["mysql --host=${self.address} --user=${self.username} --password=${self.password} < ~/schema.sql"]
-  }
 }

@@ -1,0 +1,13 @@
+plugin: aws_ec2
+boto_profile: default
+regions:
+  - us-west-1
+filters:
+  tag:project: ramp-up-devops
+  tag:responsible: carlos.lizaldav
+  tag:Name:
+    - Movies_front_instance
+    - Movies_back_instance
+keyed_groups:
+  - key: tags.Name
+    separator: ''
