@@ -1,0 +1,25 @@
+---
+- name: get info on container
+    docker_container_info:
+      name: "{{ app_name }}"
+    register: result
+
+    - name: Does container exists?
+      ansible.builtin.debug:
+        msg: "The container {{ 'exists' if result.exists else 'does not exist' }}"
+
+    - name: Stop container
+      docker_container:
+        name: "{{ app_name }}"
+        state: stopped
+      when: result.exists
+
+    - name: Remove container
+      docker_container:
+        name: "{{ app_name }}"
+        state: absent
+
+    - name: Remove image
+      docker_image:
+        state: absent
+        name: "{{ app_name }}"
