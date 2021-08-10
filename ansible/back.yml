@@ -3,34 +3,14 @@
   become_user: root
   become_method: sudo
 
+  vars:
+    app_name: appBack
+
   tasks:
-
-    - include_tasks: docker.yml
-
-    - name: get info on backend container
-      docker_container_info:
-        name: appBack
-      register: result
-
-    - name: Does container exists?
-      ansible.builtin.debug:
-        msg: "The container {{ 'exists' if result.exists else 'does not exist' }}"
-
-    - name: Stop container
-      docker_container:
-        name: appBack
-        state: stopped
-      when: result.exists
-
-    - name: Remove container
-      docker_container:
-        name: appBack
-        state: absent
-
-    - name: Remove image
-      docker_image:
-        state: absent
-        name: appBack
+    - include_role:
+        - name: docker
+    - include_role:
+        - name: clear-container
 
     - name: Execute docker container
       docker_container:
@@ -41,7 +21,7 @@
         pull: true
         published_ports:
           - "3000:3000"
-        env: 
+        env:
           DB_HOST: '{{ db_host }}'
           DB_USER: '{{ db_user }}'
           DB_PASS: '{{ db_pass }}'

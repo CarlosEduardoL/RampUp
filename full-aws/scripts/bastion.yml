@@ -54,7 +54,7 @@
       git:
         repo: https://github.com/CarlosEduardoL/RampUp
         dest: /home/ubuntu/RampUp
-        version: configuration-management
+        version: ci
       become_user: ubuntu
 
     - name: copy ansible config
