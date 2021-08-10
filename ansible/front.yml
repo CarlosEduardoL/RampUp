@@ -1,4 +1,4 @@
-- hosts: Movies_front_instance
+- hosts: all
   become: yes
   become_user: root
   become_method: sudo
@@ -7,10 +7,12 @@
     app_name: appFront
 
   tasks:
-    - include_role:
-        - name: docker
-    - include_role:
-        - name: clear-container
+    - name: include role docker
+      include_role:
+        name: docker
+    - name: include role clear-container
+      include_role:
+        name: clear-container
 
     - name: Execute docker container
       docker_container:

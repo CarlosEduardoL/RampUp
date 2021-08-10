@@ -7,10 +7,12 @@
     app_name: appBack
 
   tasks:
-    - include_role:
-        - name: docker
-    - include_role:
-        - name: clear-container
+    - name: include role docker
+      include_role:
+        name: docker
+    - name: include role clear-container
+      include_role:
+        name: clear-container
 
     - name: Execute docker container
       docker_container:
