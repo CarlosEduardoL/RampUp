@@ -30,7 +30,21 @@ func (i information) tag() string {
 	return tag
 }
 
+type tags struct {
+	front string
+	back  string
+}
+
+func (tags) get(machineType byte) string {
+	if machineType == 0 {
+		return tag.front
+	} else {
+		return tag.back
+	}
+}
+
 var pass string
+var tag tags
 
 func provide(w http.ResponseWriter, req *http.Request) {
 	addr := req.RemoteAddr
@@ -65,7 +79,7 @@ func provide(w http.ResponseWriter, req *http.Request) {
 
 		cmd := exec.Command("ansible-playbook", "-i", file_name,
 			"--private-key", "/home/ubuntu/.ssh/id_rsa", "-u", "ubuntu",
-			"-e", "db_host="+info.Dns, "-e", "back_host="+info.Dns, "-e", "tag=0.0.1",
+			"-e", "db_host="+info.Dns, "-e", "back_host="+info.Dns, "-e", "tag="+tag.get(info.Type),
 			"-e", "db_user=root", "-e", "db_pass="+pass, "/home/ubuntu/RampUp/ansible/site.yml")
 
 		err := redirectCommandOutput(cmd)
@@ -106,13 +120,20 @@ func read(std io.ReadCloser, wg sync.WaitGroup) {
 }
 
 func main() {
-	f, err := os.OpenFile("/var/log/provisioner.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+	pass = os.Getenv("DB_PASS")
+	tag_front, exist := os.LookupEnv("TAG_FRONT")
+	if !exist {
+		tag.front = "0.0.1"
+	} else {
+		tag.front = tag_front
 	}
-	defer f.Close()
-	log.SetOutput(f)
-
+	tag_back, exist := os.LookupEnv("TAG_BACK")
+	if !exist {
+		tag.back = "0.0.1"
+	} else {
+		tag.back = tag_back
+	}
 	http.HandleFunc("/created", provide)
+	log.Printf("Listen on 0.0.0.0:5555")
 	http.ListenAndServe(":5555", nil)
 }

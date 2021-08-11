@@ -1,0 +1,66 @@
+- hosts: bastion
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  vars:
+    app_name: provisioner_server
+
+  tasks:
+    - name: include role docker
+      include_role:
+        name: docker
+    - name: include role clear-container
+      include_role:
+        name: clear-container
+    - name: copy private key
+      copy:
+        src: ~/.ssh/id_rsa
+        dest: /home/ubuntu/.ssh/id_rsa
+        owner: ubuntu
+        mode: '0400'
+    - name: clone rampup
+      git:
+        repo: https://github.com/CarlosEduardoL/RampUp
+        dest: /home/ubuntu/RampUp
+        version: ci
+      become_user: ubuntu
+    - name: Execute docker container
+      docker_container:
+        name: appBack
+        image: zeronetdev/rampup-provser:{{ tag }}
+        state: started
+        restart_policy: unless-stopped
+        mounts:
+          - source: /home/ubuntu/RampUp
+            target: /home/ubuntu/RampUp
+            type: bind
+          - source: /home/ubuntu/.ssh
+            target: /home/ubuntu/.ssh
+            type: bind
+        pull: true
+        published_ports:
+          - "5555:5555"
+        env:
+          DB_PASS: '{{ db_pass }}'
+    - name: include role jenkins
+      include_role:
+        name: jenkins
+    - name: install bastion required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop: ['python3-pip', 'mysql-client']
+      register: apt_status
+      until: apt_status is success
+      delay: 6
+      retries: 10
+    - name: copy sql
+      copy:
+        src: ./schema.sql
+        dest: /home/ubuntu/schema.sql
+        owner: ubuntu
+      become_user: ubuntu
+    - name: provide db
+      raw: "mysql --host={{ address }} --user=root --password={{ db_pass }} < /home/ubuntu/schema.sql || true"
