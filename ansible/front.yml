@@ -1,36 +1,18 @@
-- hosts: Movies_front_instance
+- hosts: all
   become: yes
   become_user: root
   become_method: sudo
 
+  vars:
+    app_name: appFront
+
   tasks:
-
-    - include_tasks: docker.yml
-
-    - name: get info on frontend container
-      docker_container_info:
-        name: appFront
-      register: result
-
-    - name: Does container exists?
-      ansible.builtin.debug:
-        msg: "The container {{ 'exists' if result.exists else 'does not exist' }}"
-
-    - name: Stop container
-      docker_container:
-        name: appFront
-        state: stopped
-      when: result.exists
-
-    - name: Remove container
-      docker_container:
-        name: appFront
-        state: absent
-
-    - name: Remove image
-      docker_image:
-        state: absent
-        name: appFront
+    - name: include role docker
+      include_role:
+        name: docker
+    - name: include role clear-container
+      include_role:
+        name: clear-container
 
     - name: Execute docker container
       docker_container:
@@ -41,5 +23,5 @@
         pull: true
         published_ports:
           - "3030:3030"
-        env: 
+        env:
           BACK_HOST: '{{ back_host }}'

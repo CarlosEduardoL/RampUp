@@ -161,6 +161,14 @@ resource "aws_security_group" "movies_bastion_security_group" {
 
   ingress {
     description = "Allow request to provisioning"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = var.ssh_sg_ingress_protocol
+    cidr_blocks = concat(["${chomp(data.http.my_ip.body)}/32"], data.github_ip_ranges.github_ranges.hooks)
+  }
+
+  ingress {
+    description = "Allow request to provisioning"
     from_port   = 5555
     to_port     = 5555
     protocol    = var.ssh_sg_ingress_protocol

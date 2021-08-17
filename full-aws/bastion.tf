@@ -20,9 +20,6 @@ resource "aws_instance" "bastion" {
 
 resource "null_resource" "bastion_provision" {
   provisioner "local-exec" {
-    command = "go build -ldflags \"-X main.pass=${var.MYSQL_ROOT_PASSWORD} -w -s\" -o files/provision_server scripts/server.go"
-  }
-  provisioner "local-exec" {
-    command = "sleep 30 && ansible-playbook -i ${aws_instance.bastion.public_ip}, ./scripts/bastion.yml --private-key ~/.ssh/id_rsa -u ubuntu -e password=${var.MYSQL_ROOT_PASSWORD} -e address=${aws_db_instance.movie_db.address}"
+    command = "sleep 30 && ./scripts/bastion.sh ${aws_instance.bastion.public_ip} ${var.MYSQL_ROOT_PASSWORD} ${aws_db_instance.movie_db.address}"
   }
 }
