@@ -1,10 +1,10 @@
-- hosts: all
+- hosts: Movies_back_instance
   become: yes
   become_user: root
   become_method: sudo
 
   vars:
-    app_name: appFront
+    app_name: appBack
 
   tasks:
     - name: include role docker
@@ -16,12 +16,14 @@
 
     - name: Execute docker container
       docker_container:
-        name: appFront
-        image: zeronetdev/rampup-front:{{ tag }}
+        name: "{{ app_name }}"
+        image: zeronetdev/rampup-back:{{ tag }}
         state: started
         restart_policy: unless-stopped
         pull: true
         published_ports:
-          - "3030:3030"
+          - "3000:3000"
         env:
-          BACK_HOST: '{{ back_host }}'
+          DB_HOST: '{{ db_host }}'
+          DB_USER: '{{ db_user }}'
+          DB_PASS: '{{ db_pass }}'

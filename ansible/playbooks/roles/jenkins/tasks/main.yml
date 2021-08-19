@@ -22,3 +22,9 @@
 
 - name: ensure jenkins is running
   service: name=jenkins state=started
+
+- name: adding jenkins user to group docker
+  user:
+    name: 'jenkins'
+    groups: "docker"
+    append: yes

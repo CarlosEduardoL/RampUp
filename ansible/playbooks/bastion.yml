@@ -23,11 +23,11 @@
       git:
         repo: https://github.com/CarlosEduardoL/RampUp
         dest: /home/ubuntu/RampUp
-        version: ci
+        version: develop
       become_user: ubuntu
     - name: Execute docker container
       docker_container:
-        name: appBack
+        name: "{{ app_name }}"
         image: zeronetdev/rampup-provser:{{ tag }}
         state: started
         restart_policy: unless-stopped
@@ -51,11 +51,12 @@
         name: "{{ item }}"
         state: present
         update_cache: yes
-      loop: ['python3-pip', 'mysql-client']
+      loop: ['mysql-client', 'ansible']
       register: apt_status
       until: apt_status is success
       delay: 6
       retries: 10
+#     DB things
     - name: copy sql
       copy:
         src: ./schema.sql
@@ -64,3 +65,10 @@
       become_user: ubuntu
     - name: provide db
       raw: "mysql --host={{ address }} --user=root --password={{ db_pass }} < /home/ubuntu/schema.sql || true"
+#     Ansible things
+    - name: copy credentials
+      copy:
+        src: ~/.aws
+        dest: /home/ubuntu/
+        owner: ubuntu
+        mode: '0600'
