@@ -40,6 +40,6 @@
         published_ports:
           - "3000:3000"
         env:
-          DB_HOST: {{ variables.stdout_lines[0] }}
-          DB_USER: {{ variables.stdout_lines[1] }}
-          DB_PASS: {{ variables.stdout_lines[2] }}
+          DB_HOST: "{{ variables.stdout_lines[0] }}"
+          DB_USER: "{{ variables.stdout_lines[1] }}"
+          DB_PASS: "{{ variables.stdout_lines[2] }}"

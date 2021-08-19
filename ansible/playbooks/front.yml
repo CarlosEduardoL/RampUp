@@ -40,4 +40,4 @@
         published_ports:
           - "3030:3030"
         env:
-          BACK_HOST: {{ variables.stdout }}
+          BACK_HOST: "{{ variables.stdout }}"
