@@ -30,4 +30,4 @@
         published_ports:
           - "3000:3000"
         env_file:
-          - /home/ubuntu/back.container.env
+          - /home/ubuntu/.container.env
