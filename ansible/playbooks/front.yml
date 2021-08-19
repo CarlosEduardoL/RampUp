@@ -27,7 +27,8 @@
       register: variables
 
     - name: debug var
-      debug: {{ variables }}
+      debug:
+        var: variables
 
     - name: Execute docker container
       docker_container:
