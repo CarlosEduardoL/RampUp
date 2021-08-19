@@ -14,6 +14,11 @@
       include_role:
         name: clear-container
 
+    - name: Get env file
+      fetch:
+        src: /home/ubuntu/.container.env
+        dest: /home/ubuntu/front.container.env
+
     - name: Execute docker container
       docker_container:
         name: "{{ app_name }}"
@@ -24,4 +29,4 @@
         published_ports:
           - "3030:3030"
         env_file:
-          - /home/ubuntu/.container.env
+          - /home/ubuntu/front.container.env
