@@ -20,6 +20,15 @@
         dest: /home/ubuntu/.container.env
         flat: yes
 
+    - name: variables
+      shell:
+        cmd: |
+          cat /home/ubuntu/.container.env
+      register: variables
+
+    - name: debug var
+      debug: {{ variables }}
+
     - name: Execute docker container
       docker_container:
         name: "{{ app_name }}"
