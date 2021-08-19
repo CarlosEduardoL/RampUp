@@ -19,12 +19,14 @@
         dest: /home/ubuntu/.ssh/id_rsa
         owner: ubuntu
         mode: '0400'
+
     - name: clone rampup
       git:
         repo: https://github.com/CarlosEduardoL/RampUp
         dest: /home/ubuntu/RampUp
-        version: develop
+        version: ci-cd
       become_user: ubuntu
+
     - name: Execute docker container
       docker_container:
         name: "{{ app_name }}"
