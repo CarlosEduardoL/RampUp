@@ -23,5 +23,5 @@
         pull: true
         published_ports:
           - "3030:3030"
-        env:
-          BACK_HOST: '{{ back_host }}'
+        env_file:
+          - /home/ubuntu/.container.env
