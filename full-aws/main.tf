@@ -5,6 +5,10 @@ terraform {
       source  = "aws"
       version = "3.50.0"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -32,3 +36,5 @@ data "aws_subnet" "private_subnet_2" {
 data "http" "my_ip" {
   url = "http://ipv4.icanhazip.com"
 }
+
+data "github_ip_ranges" "github_ranges" {}

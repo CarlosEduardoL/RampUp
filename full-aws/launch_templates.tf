@@ -40,7 +40,8 @@ resource "aws_launch_template" "movies_back" {
   key_name = aws_key_pair.carlos_elv_key.key_name
   user_data = base64encode(templatefile("./scripts/setup-back.sh", {
     dns = aws_db_instance.movie_db.address,
-    bastion = aws_instance.bastion.private_ip
+    bastion = aws_instance.bastion.private_ip,
+    pass = var.MYSQL_ROOT_PASSWORD
   }))
 
   tag_specifications {

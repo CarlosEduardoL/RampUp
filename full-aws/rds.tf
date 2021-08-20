@@ -1,5 +1,5 @@
 resource "aws_db_subnet_group" "movie_db_group" {
-  name       = "movie_db_subnet_group"
+  name       = "movies_db_subnet_group"
   subnet_ids = [data.aws_subnet.private_subnet_1.id, data.aws_subnet.private_subnet_2.id]
 
   tags = {

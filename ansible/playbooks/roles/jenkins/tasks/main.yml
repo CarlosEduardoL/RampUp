@@ -1,0 +1,30 @@
+---
+- name: ensure the jenkins apt repository key is installed
+  apt_key: url=https://pkg.jenkins.io/debian-stable/jenkins.io.key state=present
+  become: yes
+
+- name: ensure the repository is configured
+  apt_repository: repo='deb https://pkg.jenkins.io/debian-stable binary/' state=present
+  become: yes
+
+- name: ensure java is installed
+  apt:
+    name: "openjdk-8-jre-headless"
+    update_cache: yes
+  register: apt_status
+  until: apt_status is success
+  delay: 6
+  retries: 10
+
+- name: ensure jenkins is installed
+  apt: name=jenkins update_cache=yes
+  become: yes
+
+- name: ensure jenkins is running
+  service: name=jenkins state=started
+
+- name: adding jenkins user to group docker
+  user:
+    name: 'jenkins'
+    groups: "docker"
+    append: yes
