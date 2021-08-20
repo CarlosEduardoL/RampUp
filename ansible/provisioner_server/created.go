@@ -46,7 +46,7 @@ func provide(w http.ResponseWriter, req *http.Request) {
 		cmd := exec.Command("ansible-playbook", "-i", file_name,
 			"--private-key", "/home/ubuntu/.ssh/id_rsa", "-u", "ubuntu",
 			"-e", "db_host="+info.Dns, "-e", "back_host="+info.Dns, "-e", "tag="+tag.get(info.Type),
-			"-e", "db_user=root", "-e", "db_pass="+pass, "/home/ubuntu/RampUp/ansible/site.yml")
+			"-e", "db_user=root", "-e", "db_pass="+pass, "/home/ubuntu/RampUp/ansible/playbooks/site.yml")
 
 		err := redirectCommandOutput(cmd)
 		if err != nil {
