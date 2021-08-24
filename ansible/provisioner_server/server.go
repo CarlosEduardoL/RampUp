@@ -44,18 +44,9 @@ func read(std io.ReadCloser, wg sync.WaitGroup) {
 
 func main() {
 	pass = os.Getenv("DB_PASS")
-	tag_front, exist := os.LookupEnv("TAG_FRONT")
-	if !exist {
-		tag.front = "0.0.1"
-	} else {
-		tag.front = tag_front
-	}
-	tag_back, exist := os.LookupEnv("TAG_BACK")
-	if !exist {
-		tag.back = "0.0.1"
-	} else {
-		tag.back = tag_back
-	}
+	tag.front = "0.0.1"
+	tag.back = "0.0.1"
+	go watch("/home/ubuntu/tags")
 	http.HandleFunc("/created", provide)
 	log.Printf("Listen on 0.0.0.0:5555")
 	http.ListenAndServe(":5555", nil)
