@@ -1,0 +1,45 @@
+- hosts: Movies_back_instance
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  vars:
+    app_name: appBack
+
+  tasks:
+    - name: include role docker
+      include_role:
+        name: docker
+    - name: include role clear-container
+      include_role:
+        name: clear-container
+
+    - name: Get env file
+      fetch:
+        src: /home/ubuntu/.container.env
+        dest: /home/ubuntu/.container.env
+        flat: yes
+
+    - name: variables
+      shell:
+        cmd: |
+          cat /home/ubuntu/.container.env
+      register: variables
+
+    - name: debug var
+      debug:
+        var: variables
+
+    - name: Execute docker container
+      docker_container:
+        name: "{{ app_name }}"
+        image: zeronetdev/rampup-back:{{ tag }}
+        state: started
+        restart_policy: unless-stopped
+        pull: true
+        published_ports:
+          - "3000:3000"
+        env:
+          DB_HOST: "{{ variables.stdout_lines[0] }}"
+          DB_USER: "{{ variables.stdout_lines[1] }}"
+          DB_PASS: "{{ variables.stdout_lines[2] }}"

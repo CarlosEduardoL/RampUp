@@ -1,0 +1,43 @@
+- hosts: Movies_front_instance
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  vars:
+    app_name: appFront
+
+  tasks:
+    - name: include role docker
+      include_role:
+        name: docker
+    - name: include role clear-container
+      include_role:
+        name: clear-container
+
+    - name: Get env file
+      fetch:
+        src: /home/ubuntu/.container.env
+        dest: /home/ubuntu/.container.env
+        flat: yes
+
+    - name: variables
+      shell:
+        cmd: |
+          cat /home/ubuntu/.container.env
+      register: variables
+
+    - name: debug var
+      debug:
+        var: variables
+
+    - name: Execute docker container
+      docker_container:
+        name: "{{ app_name }}"
+        image: zeronetdev/rampup-front:{{ tag }}
+        state: started
+        restart_policy: unless-stopped
+        pull: true
+        published_ports:
+          - "3030:3030"
+        env:
+          BACK_HOST: "{{ variables.stdout }}"
